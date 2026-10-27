@@ -57,3 +57,27 @@ Ubuntu 本地已实现 audio_io、transforms、scenes、simulation、corpus 模�
 仓库发布前需确定 GitHub 仓库、数据许可与可发布内容；不会以占位表格算完成。
 所有 D1–D8 满足前，整体项目保持未完成状态。
 
+
+## 2026-10-28 更新：第四至第七部分的实际验收
+
+本节覆盖上文的历史待办状态；项目尚未整体完成。
+
+- 第四部分完成：200 条混合音、三种 DOA，共 600 次估计，RT60/SNR 曲线与三个失败谱图已生成并检查。实际 MAE 约 62–64°，强干扰主导源混淆如实保留，不用真值选峰美化结果。
+- 第五部分完成：原始 AISHELL train/dev 说话人独立，640/160 个仿真特征；83,137 参数 GRU 在 Ubuntu CPU 完成 20 epoch，最佳 epoch=19，单 batch 576 步预检通过。600 份掩码前端增强指标均有效。见 docs/phase5_validation.md 和 results/masks.md。
+- 第六部分核心完成：SenseVoice int8 ONNX 本地解码，200 干净语音加六种前端，共 1400 份成功解码。CER 表见 results/asr.md，十个不同场景的指标不一致分析见 analysis.md。
+- 第七部分实验完成：20 位测试说话人的配对阵列/RT60/DOA 误差消融，共 60 次联合房间仿真、1320 行有限分数。见 results/ablations.md、docs/phase6_7_validation.md。
+- 75 项测试、全仓 Ruff、两套环境 pip check 通过。训练/掩码/CER/消融日志均在 results/generated/，检查点在 checkpoints/，不加入 Git。
+
+关键负结果：神经 MVDR CER=33.37%，尚不及 DAS 的 28.91%；单通道补充模型 CER=51.85%，虽然 SI-SDR/PESQ 改善但识别退化。
+Oracle MVDR 为 17.27%，未处理为 37.89%。不能将训练跑通写成神经方法胜出。
+
+项目一已在 /home/kingcrab/speech-front-end/denoising 补建单通道对照，复用相同掩码权重；没有声称完整项目一 AEC/VAD 已完成。
+Colab 尚未验证，此次训练实际使用 Ubuntu CPU。
+
+下一步仅复用已有实验，不重跑训练或整批评测：
+
+1. D1：整合 README、全流程单命令、整理可发布的图/音频及许可证，发布公开 GitHub 仓库。
+2. D8：两页技术总结、一页水声到麦克风阵列笔记、三条简历 bullet、三分钟讲述稿、20 题问答。
+3. 核对官方 ASR 基准的协议差异，最终 D1–D8 审计；人工听音和练习不冒充完成。
+
+额度恢复后的心跳继续以上事项，完成前不把整体目标标为完成。

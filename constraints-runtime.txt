@@ -1,0 +1,7 @@
+# 保留已经验收的科学计算版本，避免 ASR 安装静默改变第三阶段环境。
+numpy==2.4.6
+scipy==1.17.1
+matplotlib==3.11.2
+soundfile==0.14.0
+PyYAML==6.0.3
+pyroomacoustics==0.10.1

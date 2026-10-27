@@ -96,13 +96,13 @@ class RangeReader(io.RawIOBase):
         return b"".join(chunks)
 
 
-def public_aishell_zip():
+def public_dataset_zip(namespace: str, dataset_name: str, archive_name: str):
     """遵循 ModelScope SDK 的公开数据访问流程，临时凭证只留在内存中。"""
     import json
 
     import oss2
 
-    api = "https://modelscope.cn/api/v1/datasets/modelscope/speech_asr_aishell1_testsets"
+    api = f"https://www.modelscope.cn/api/v1/datasets/{namespace}/{dataset_name}"
     # 与字节流传输统一使用 curl 的重试机制，保留 TLS 证书校验。
     response = subprocess.run([
         "curl", "-fsSL", "--retry", "3", "--retry-all-errors", "--max-time", "30",
@@ -115,8 +115,14 @@ def public_aishell_zip():
     auth = oss2.StsAuth(config["AccessId"], config["AccessSecret"], config["SecurityToken"])
     bucket = oss2.Bucket(auth, "https://" + config["Region"] + ".aliyuncs.com", config["Bucket"])
     for prefix in (config["Dir"], config["BackupDir"]):
-        key = prefix.rstrip("/") + "/speech_asr_aishell1_testsets.zip"
+        key = prefix.rstrip("/") + "/" + archive_name
         if bucket.object_exists(key):
             return SharedRangeCache(bucket, key)
     raise RuntimeError("public dataset archive not found through supported API")
+
+
+def public_aishell_zip():
+    """AISHELL-1 原始测试划分的公开分发。"""
+    return public_dataset_zip("modelscope", "speech_asr_aishell1_testsets",
+                              "speech_asr_aishell1_testsets.zip")
 

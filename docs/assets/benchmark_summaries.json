@@ -1,0 +1,261 @@
+{
+  "phase3": {
+    "dataset_count": 200,
+    "reference": "direct-path target at reference mic",
+    "crop": "exclude 0.6-second target-free calibration; retain propagation and full tail",
+    "asr_status": "not run",
+    "methods": {
+      "ref_mic": {
+        "n": 200,
+        "metrics": {
+          "si_sdr_db": -8.327204328673488,
+          "pesq_wb": 1.0638441669940948,
+          "stoi": 0.4859604634858428,
+          "si_sdr_reverberant_db": -2.382506845353463
+        },
+        "valid_counts": {
+          "si_sdr_db": 200,
+          "pesq_wb": 200,
+          "stoi": 200,
+          "si_sdr_reverberant_db": 200
+        }
+      },
+      "das": {
+        "n": 200,
+        "metrics": {
+          "si_sdr_db": -6.090392061650683,
+          "pesq_wb": 1.0789934748411179,
+          "stoi": 0.5242103266295097,
+          "si_sdr_reverberant_db": 0.08922061681024722
+        },
+        "valid_counts": {
+          "si_sdr_db": 200,
+          "pesq_wb": 200,
+          "stoi": 200,
+          "si_sdr_reverberant_db": 200
+        }
+      },
+      "oracle_mvdr": {
+        "n": 200,
+        "metrics": {
+          "si_sdr_db": -2.500808637992059,
+          "pesq_wb": 1.102382241487503,
+          "stoi": 0.6163188921106884,
+          "si_sdr_reverberant_db": -0.05475750586145087
+        },
+        "valid_counts": {
+          "si_sdr_db": 200,
+          "pesq_wb": 200,
+          "stoi": 200,
+          "si_sdr_reverberant_db": 200
+        }
+      }
+    }
+  },
+  "phase4": {
+    "utterances": 200,
+    "frequency_range_hz": [
+      500,
+      3500
+    ],
+    "grid_step_deg": 1,
+    "music_signal_subspace_dimension": 1,
+    "methods": {
+      "gcc_phat": {
+        "n": 200,
+        "mae_deg": 62.54,
+        "median_error_deg": 45.5,
+        "within_10deg": 0.24
+      },
+      "srp_phat": {
+        "n": 200,
+        "mae_deg": 64.165,
+        "median_error_deg": 44.5,
+        "within_10deg": 0.3
+      },
+      "music": {
+        "n": 200,
+        "mae_deg": 61.845,
+        "median_error_deg": 40.0,
+        "within_10deg": 0.315
+      }
+    }
+  },
+  "phase5": {
+    "utterances": 200,
+    "methods": {
+      "irm_mvdr": {
+        "n": 200,
+        "metrics": {
+          "si_sdr_db": -1.977778814719577,
+          "pesq_wb": 1.177065405845642,
+          "stoi": 0.6017955302209766,
+          "si_sdr_reverberant_db": 6.300975009309757
+        },
+        "valid_counts": {
+          "si_sdr_db": 200,
+          "pesq_wb": 200,
+          "stoi": 200,
+          "si_sdr_reverberant_db": 200
+        }
+      },
+      "neural_mvdr": {
+        "n": 200,
+        "metrics": {
+          "si_sdr_db": -6.175615640463548,
+          "pesq_wb": 1.0740403908491134,
+          "stoi": 0.5123489657350734,
+          "si_sdr_reverberant_db": 0.9520578093722843
+        },
+        "valid_counts": {
+          "si_sdr_db": 200,
+          "pesq_wb": 200,
+          "stoi": 200,
+          "si_sdr_reverberant_db": 200
+        }
+      },
+      "project1_singlechannel": {
+        "n": 200,
+        "metrics": {
+          "si_sdr_db": -4.870628726625236,
+          "pesq_wb": 1.1640966212749482,
+          "stoi": 0.499693743937691,
+          "si_sdr_reverberant_db": 3.306404810618797
+        },
+        "valid_counts": {
+          "si_sdr_db": 200,
+          "pesq_wb": 200,
+          "stoi": 200,
+          "si_sdr_reverberant_db": 200
+        }
+      }
+    },
+    "cer_status": "not run yet"
+  },
+  "phase6": {
+    "protocol_fingerprint": "6ac3fe191ad2d57fe094bf1b32bf5965c4a5568ec1c0988f23d2e1f569e77d56",
+    "methods": {
+      "clean": {
+        "n": 200,
+        "valid": 200,
+        "failed": 0,
+        "cer": 0.026597582037996545,
+        "edits": 77,
+        "reference_characters": 2895,
+        "decode_seconds": 44.022057978989324
+      },
+      "das": {
+        "n": 200,
+        "valid": 200,
+        "failed": 0,
+        "cer": 0.28911917098445594,
+        "edits": 837,
+        "reference_characters": 2895,
+        "decode_seconds": 52.82569221000995
+      },
+      "irm_mvdr": {
+        "n": 200,
+        "valid": 200,
+        "failed": 0,
+        "cer": 0.17409326424870467,
+        "edits": 504,
+        "reference_characters": 2895,
+        "decode_seconds": 52.27935957800946
+      },
+      "neural_mvdr": {
+        "n": 200,
+        "valid": 200,
+        "failed": 0,
+        "cer": 0.33367875647668394,
+        "edits": 966,
+        "reference_characters": 2895,
+        "decode_seconds": 52.55748190099803
+      },
+      "oracle_mvdr": {
+        "n": 200,
+        "valid": 200,
+        "failed": 0,
+        "cer": 0.17271157167530224,
+        "edits": 500,
+        "reference_characters": 2895,
+        "decode_seconds": 52.34223615899464
+      },
+      "project1_singlechannel": {
+        "n": 200,
+        "valid": 200,
+        "failed": 0,
+        "cer": 0.5184801381692573,
+        "edits": 1501,
+        "reference_characters": 2895,
+        "decode_seconds": 52.33948000700184
+      },
+      "ref_mic": {
+        "n": 200,
+        "valid": 200,
+        "failed": 0,
+        "cer": 0.3789291882556131,
+        "edits": 1097,
+        "reference_characters": 2895,
+        "decode_seconds": 53.6205016070071
+      }
+    },
+    "clean_50_gate": {
+      "n": 50,
+      "scene_ids": [
+        "scene_0015",
+        "scene_0032",
+        "scene_0034",
+        "scene_0001",
+        "scene_0003",
+        "scene_0041",
+        "scene_0007",
+        "scene_0019",
+        "scene_0021",
+        "scene_0066",
+        "scene_0069",
+        "scene_0110",
+        "scene_0048",
+        "scene_0063",
+        "scene_0073",
+        "scene_0010",
+        "scene_0012",
+        "scene_0038",
+        "scene_0023",
+        "scene_0031",
+        "scene_0037",
+        "scene_0039",
+        "scene_0071",
+        "scene_0085",
+        "scene_0050",
+        "scene_0095",
+        "scene_0097",
+        "scene_0000",
+        "scene_0046",
+        "scene_0082",
+        "scene_0028",
+        "scene_0035",
+        "scene_0033",
+        "scene_0060",
+        "scene_0054",
+        "scene_0062",
+        "scene_0020",
+        "scene_0027",
+        "scene_0004",
+        "scene_0018",
+        "scene_0011",
+        "scene_0013",
+        "scene_0006",
+        "scene_0022",
+        "scene_0002",
+        "scene_0005",
+        "scene_0025",
+        "scene_0047",
+        "scene_0009",
+        "scene_0014"
+      ],
+      "cer": 0.017496635262449527,
+      "edits": 13,
+      "reference_characters": 743
+    }
+  }
+}

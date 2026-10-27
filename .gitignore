@@ -9,6 +9,8 @@ dist/
 data/
 checkpoints/
 results/generated/
+output/
+tmp/
 *.log
 scripts/codex-farfield-asr.pub
 scripts/connect_ssh.sh

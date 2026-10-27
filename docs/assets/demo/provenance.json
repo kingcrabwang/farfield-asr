@@ -1,0 +1,47 @@
+{
+  "type": "procedural harmonic diagnostic, not intelligible speech",
+  "third_party_recordings": false,
+  "not_part_of_benchmark": true,
+  "seed": 20261028,
+  "common_playback_gain": 1.0,
+  "scene": {
+    "scene_id": "scene_0000",
+    "seed": 20261027,
+    "room_dimensions_m": [
+      8.0,
+      5.5,
+      2.8
+    ],
+    "array_geometry": "linear",
+    "n_mics": 4,
+    "spacing_or_radius_m": 0.04,
+    "array_center_m": [
+      4.0,
+      2.75,
+      1.2
+    ],
+    "target_position_m": [
+      4.5,
+      3.6160254037844384,
+      1.2
+    ],
+    "interference_position_m": [
+      5.019905705096912,
+      1.9439030128385473,
+      1.2
+    ],
+    "rt60_s": 0.2,
+    "snr_db": 10.0,
+    "sir_db": -5.0,
+    "sample_rate": 16000,
+    "sound_speed_m_s": 343.0,
+    "reference_mic": 0
+  },
+  "sha256": {
+    "ref_mic.wav": "28096776b8ae51b950a5e7d0ed871ce03ef1180edae332c0c402985869a47a92",
+    "das.wav": "34bdd491613e13e6e9ad8b928e16c5d6244e9fb4245ee70b66bf0f3dd6715046",
+    "oracle_mvdr.wav": "c9ce04f67b90b86f8bc98ec14a5e371265a43e4ccd19a6a59648eebc2bf9041e"
+  },
+  "license": "CC0-1.0",
+  "creator": "kingcrabwang project code"
+}

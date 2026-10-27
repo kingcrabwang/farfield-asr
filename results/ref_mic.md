@@ -1,13 +1,23 @@
-# Traditional frontend baseline
+# 固定 ASR 与全前端评测
 
-Real AISHELL-1 test subset; direct-path reference. CER not run in this stage.
+相同 200 条测试语音、相同文本归一化、SenseVoiceSmall int8 ONNX CPU。
+CER 为总编辑数 / 总参考字符数，不是逐句 CER 的算术平均。
+固定中文、关闭 ITN、batch=1，去控制 token，不调用添加 emoji 的后处理。
 
-| Frontend | N | SI-SDR (dB) | PESQ-WB | STOI | CER |
-| --- | ---: | ---: | ---: | ---: | --- |
-| ref_mic | 200 | -8.3272 | 1.0638 | 0.4860 | not run |
-| das | 200 | -6.0904 | 1.0790 | 0.5242 | not run |
-| oracle_mvdr | 200 | -2.5008 | 1.1024 | 0.6163 | not run |
+| 前端 | N | SI-SDR (dB) | PESQ-WB | STOI | CER |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ref_mic | 200 | -8.3272 | 1.0638 | 0.4860 | 37.89% |
+| das | 200 | -6.0904 | 1.0790 | 0.5242 | 28.91% |
+| oracle_mvdr | 200 | -2.5008 | 1.1024 | 0.6163 | 17.27% |
+| irm_mvdr | 200 | -1.9778 | 1.1771 | 0.6018 | 17.41% |
+| neural_mvdr | 200 | -6.1756 | 1.0740 | 0.5123 | 33.37% |
+| project1_singlechannel | 200 | -4.8706 | 1.1641 | 0.4997 | 51.85% |
 
-Means are utterance averages. Check summary.json valid_counts and per-case errors.
-Oracle MVDR uses true DOA and a known target-free prefix; it is a privileged
-reference, not a guarantee of higher perceptual scores under steering mismatch.
+干净源语音 200 条 CER：2.66%。
+固定说话人平衡的 50 条干净语音 CER：1.75%。
+此小子集不是官方全量 AISHELL 测试集，不据此声称复现官方精度。
+
+IRM 使用真实目标/噪声分量，oracle MVDR 使用真实方向及已知纯噪声校准前缀；两者不是可部署系统。
+project1_singlechannel 为本轮补建并与神经 MVDR 共用权重的单通道对照。
+
+原始解码、输入和模型哈希、耗时、每句编辑数保存在 results/generated/phase6/。

@@ -1,125 +1,131 @@
 # 多通道远场语音前端 + 下游 ASR 评测
 
-按《项目二执行手册》分阶段实现。第一、二阶段基础设施已完成：Ubuntu Conda 环境、
-阵列与频域 DAS 原语、音频/STFT、种子化场景、房间/扩散噪声仿真与数据清单检查。
-第三阶段已接入真实测试语料、200 条正式仿真数据以及 DAS/oracle MVDR 批量评测。
-尚未完成 DOA、神经掩码训练、ASR 与最终消融/发布。
-任何图示或理论噪声增益都不等于真实语音实验结果。
+可复现的 CPU 实验项目：房间仿真 → 传统/神经波束形成 → 固定中文 ASR → 增强与识别联合分析。
+包含 200 条真实带文本测试语音、六种前端、三种 DOA、轻量 GRU 自训练及配对消融。
+实际实验目录为 Ubuntu `/home/kingcrab/farfield-asr`；Windows 共享目录用于传递与查看交付。
 
-最终工作目录：Ubuntu `/home/kingcrab/farfield-asr`。
-Windows `F:\sharefile\farfield-asr` 是初始传递副本；后续以 Ubuntu 本地项目为准。
+## 主要结果
 
-## 首次安装（Ubuntu）
+200 条原始 AISHELL 测试语音、20 位说话人；六种前端共用测试输入和文本规范化。
+SI-SDR/PESQ/STOI 参考为物理参考麦克风的目标直达声，所有处理音频裁掉相同 0.6 秒校准前缀。
 
-已存在 Miniconda 和 VMware 共享目录时，从 Ubuntu 终端运行：
+| 前端 | SI-SDR / dB | PESQ-WB | STOI | CER |
+| --- | ---: | ---: | ---: | ---: |
+| 未处理 | -8.3272 | 1.0638 | 0.4860 | 37.89% |
+| DAS | -6.0904 | 1.0790 | 0.5242 | 28.91% |
+| Oracle MVDR | -2.5008 | 1.1024 | 0.6163 | 17.27% |
+| 理想功率掩码 MVDR | -1.9778 | 1.1771 | 0.6018 | 17.41% |
+| 神经掩码 MVDR | -6.1756 | 1.0740 | 0.5123 | 33.37% |
+| 单通道补充模型 | -4.8706 | 1.1641 | 0.4997 | 51.85% |
 
-```bash
-bash /mnt/hgfs/sharefile/farfield-asr/scripts/install_in_home.sh
-```
+固定 SenseVoiceSmall int8 ONNX CPU，中文、关闭 ITN、batch=1。
+干净语音 200 条 CER 为 2.66%，固定 50 条子集为 1.75%。CER 按总编辑数/总字符数汇总。
+完整 [ASR 表与协议](results/asr.md)、[十个指标不一致案例](analysis.md)。
 
-脚本拒绝覆盖已有本地项目，创建独立环境 `farfield-asr`，安装本地包，
-运行测试、生成方向图，并记录依赖版本。网络或求解失败时保留日志。
-若复制成功后安装中断，可以直接重试：
+神经 MVDR 尚未超过 DAS；单通道模型改善部分增强指标却损害识别，负结果完整保留。
+Oracle MVDR 使用真实方向和已知纯噪声校准段；IRM 使用真实分量，均为额外信息诊断，不能直接部署。
+单通道模块是本轮在项目一独立子目录补建，复用同一 GRU 权重；不是独立预训练系统。
 
-```bash
-cd /home/kingcrab/farfield-asr
-bash scripts/bootstrap.sh
-```
-
-基础环境可用后重复第一阶段实验：
-
-```bash
-conda activate farfield-asr
-cd /home/kingcrab/farfield-asr
-python -m pytest -q
-python scripts/plot_beampattern.py
-```
-
-## 目录
-
-```text
-configs/base.yaml               场景参数草案，单位写在键名中
-src/farfield_asr/arrays.py       4 麦线阵、6 麦圆阵、远场导向矢量
-src/farfield_asr/beamforming.py  DAS 权重与频域应用
-src/farfield_asr/transforms.py   多通道可逆 STFT/ISTFT
-src/farfield_asr/audio_io.py     WAV 读写、布局与采样率约束
-src/farfield_asr/scenes.py       场景配置、几何约束与固定种子抽样
-src/farfield_asr/simulation.py   RIR、扩散场、混合分量与 RT60 拟合
-src/farfield_asr/corpus.py       语音清单、说话人隔离与文件检查
-src/farfield_asr/frontends.py    统一前端接口与纯噪声协方差校准
-src/farfield_asr/metrics.py      SI-SDR/PESQ/STOI 与手写 CER 编辑距离
-src/farfield_asr/data_access.py  公开 ZIP 按需读取与有界分块缓存
-scripts/bootstrap.sh            专用环境安装及基础验证
-scripts/plot_beampattern.py     无图形界面的方向图实验
-scripts/check_environment.py  环境、源码位置及原生房间仿真验收
-scripts/run_phase2.py          场景、RIR 和合成诊断信号生成
-scripts/verify_phase2.py       从落盘文件验证分量、SNR/SIR 与重复运行
-scripts/validate_corpus.py     正式语音清单导入前检查
-scripts/run_phase3.sh          真实语料准备、200 场景生成、评测与图表的一条命令入口
-tests/                         几何、重建、仿真、数据泄漏、MVDR 与指标测试
-docs/conventions.md             全项目统一的数学与指标约定
-docs/progress.md                分阶段交付及真实完成状态
-results/generated/             本机生成的图、日志和依赖清单，不进入 Git
-```
-
-当前计算链路：阵列坐标 → 声源方向 → 导向矢量 → DAS 权重 → 单通道复数谱。
-第二阶段链路：配置 → 场景 → RIR/扩散场 → 可分解混合 → WAV → STFT/ISTFT → 落盘验收。
-第三阶段链路：真实语音/噪声清单 → 200 场景 → WAV → ref/DAS/oracle MVDR → 统一指标。
-下一阶段接入 DOA 估计和分组误差分析。
-
-2026-10-27 Ubuntu 实测：8 项测试通过，Ruff 与依赖检查通过，四路 RIR 仿真成功。
-详细版本与验收见 [第一阶段记录](docs/phase1_validation.md)。
-
-第二阶段：46 项测试通过；100 场景、6 组仿真示例，50 个产物在两次独立运行中逐字节一致。
-见 [第二阶段记录与复现命令](docs/phase2_validation.md) 和 [数据导入协议](docs/data_protocol.md)。
-
-第三阶段：59 项测试通过，200 条真实语音仿真测试集、600 个有效前端评测输出。
-详见 [第三阶段验收](docs/phase3_validation.md)、[结果表](results/ref_mic.md)、
-[五组音频对比](docs/demo_phase3.md) 和 [数据来源](docs/data_sources.md)。
-
-```bash
-conda activate farfield-asr
-cd /home/kingcrab/farfield-asr
-bash scripts/run_phase3.sh
-```
-
-主参考为参考麦克风处的目标直达声，三种前端共用裁剪区间；下表为 200 条语句均值。
-
-| 前端 | SI-SDR（dB） | PESQ-WB | STOI | CER |
-| --- | ---: | ---: | ---: | --- |
-| 未处理 | −8.3272 | 1.0638 | 0.4860 | 未运行 |
-| DAS | −6.0904 | 1.0790 | 0.5242 | 未运行 |
-| oracle MVDR | −2.5008 | 1.1024 | 0.6163 | 未运行 |
-
-oracle MVDR 使用真值方向和已知纯噪声前缀，不是可以无条件部署的盲处理算法；
-CER 必须在后续 ASR 推理后填入，不能以增强分数代替。
+## 架构
 
 ```mermaid
 flowchart LR
-    Speech[真实语音与文本清单] --> RIR[房间 RIR 与传播]
-    Noise[真实点源噪声] --> RIR
-    Config[场景配置和随机种子] --> RIR
-    RIR --> Mix[保存分量的多通道混合音]
-    Diffuse[空间相关扩散噪声] --> Mix
-    Mix --> STFT[共用 STFT]
-    STFT --> DAS[DAS]
-    STFT --> MVDR[纯噪声校准与 oracle MVDR]
-    Mix --> Ref[参考麦克风]
-    DAS --> WAV[同长度单通道 WAV]
-    MVDR --> WAV
-    Ref --> WAV
-    WAV --> Metrics[SI-SDR PESQ STOI]
-    WAV -. 后续阶段 .-> ASR[ASR 与 CER]
+    C[配置 / 固定种子] --> R[房间 RIR]
+    S[原始划分语音与文本] --> R
+    N[点源噪声] --> R
+    R --> X[多通道混合与独立真值分量]
+    D[空间相关扩散场] --> X
+    X --> F[STFT]
+    F --> B[DAS / Oracle MVDR]
+    F --> G[参考通道 log-power / GRU]
+    G --> M[掩码加权空间协方差 / Souden MVDR]
+    G --> U[单通道掩码降噪]
+    X --> O[参考麦克风]
+    B --> W[同长度单通道 WAV]
+    M --> W
+    U --> W
+    O --> W
+    W --> A[固定 SenseVoice ASR / CER]
+    W --> E[SI-SDR / PESQ / STOI]
+    F --> Q[GCC-PHAT / SRP-PHAT / MUSIC 诊断]
 ```
 
-## 环境与复现范围
+## 一条命令复现
 
-Python 3.11，基础科学计算依赖使用兼容范围；pyroomacoustics 固定为 0.10.1。
-首次安装成功后保存 `results/generated/conda-linux-64.explicit.txt` 与
-`pip-freeze.txt`，它们记录实际版本；当前配置文件不是完整锁文件。
-Ubuntu 虚拟机先以 CPU 跑通。是否存在可用于训练的 CUDA 设备尚未确认，
-后续网络采用可在 CPU 运行的小模型，训练规模根据实测决定。
+Ubuntu 22.04/24.04、Linux x86-64、已安装 Miniconda，`curl` 可用。
+在克隆后的项目根目录运行：
 
-官方参考：[Conda 环境创建](https://docs.conda.io/projects/conda/en/stable/commands/env/create.html)、
-[pyroomacoustics 项目发布与 Python 要求](https://pypi.org/project/pyroomacoustics/)。
+```bash
+bash scripts/reproduce.sh
+```
 
+默认 Conda 根目录为 `~/miniconda3`，其他位置使用 `CONDA_ROOT=/你的路径 bash scripts/reproduce.sh`。
+入口创建 `farfield-asr`（仿真/训练，NumPy 2.x 兼容）与 `farfield-asr-decode`（ASR，NumPy 1.26.4），
+安装固定 PyTorch CPU 版本，准备公开数据、训练、评测并生成表格与图。
+完整数据/权重/缓存只留在本机；首次运行需要网络、数 GB 磁盘和 CPU 计算时间，网络速度可能主导耗时。
+项目一补充模块导出到 `~/speech-front-end/denoising`，拒绝覆盖内容不同的已有文件。
+
+已完成的训练、增强音频、ASR、消融会校验输入/代码/产物哈希后复用。
+若协议改变，脚本拒绝混用旧缓存；请保留旧实验，再设置新的输出目录，而非删除证据。
+仅核查本机已有成果：
+
+```bash
+bash scripts/reproduce.sh --verify-only
+```
+
+完整脚本在本机已有数据上验收；未声称在另一台全新机器上重新下载验证全部网络端点。
+本次使用 Ubuntu CPU 完成训练，Colab 未验证且未使用。
+
+## 音频与图表
+
+[音频演示](docs/demo.md) 提供可公开的自制谐波诊断音频，以及复现后五组真实语音的本地试听入口。
+公开合成音频不参与正式评测。机器完整性检查不等于人工听音。
+
+![方向响应](docs/assets/phase3_beampatterns.png)
+
+![训练过程](docs/assets/phase5_training.png)
+
+## 配对消融与 DOA
+
+20 位说话人、最大孔径固定 0.12 m、共享联合声场；比较线阵 2/4/6 麦与圆阵 4/6 麦，
+RT60=0.2/0.4/0.6 秒、4 麦线阵导向误差 ±5/±10/±20 度，共 1320 次有效评分。
+采用共同虚拟中心参考，因此数值与主测试不可直接拼接。
+[消融表与结论](results/ablations.md)：混响增加时两种方法退化，MVDR 对导向失配更敏感。
+
+![导向失配](docs/assets/phase7_doa_error.png)
+
+三种 DOA 均只看混合音，不读取真值来选峰。GCC/SRP/MUSIC 的目标 MAE 为
+62.54°/64.17°/61.85°；强干扰下主导源与目标说话人混淆。
+[真实失败案例](results/doa.md)；非配对 RT60/SNR 分组仅为描述，不解释为因果消融。
+
+## 目录与阅读顺序
+
+```text
+configs/                  带单位的房间、阵列与随机场景配置
+src/farfield_asr/         阵列 / STFT / 仿真 / 数据 / 前端 / DOA / 掩码 / 指标
+scripts/                 公开数据准备、训练、批量评测、复现与验收
+tests/                   75 项物理约束、重建、隔离、数值稳定与指标测试
+integrations/project1/   单通道补充模块及示例
+results/                 主结果、DOA、掩码与消融报告
+docs/assets/             可公开图表、汇总、PDF 和自制演示音频
+docs/                    约定、来源、阶段验收与表达材料
+data/ checkpoints/       本机数据和权重，Git 忽略
+results/generated/       完整分数、原始解码、图、日志与运行环境，Git 忽略
+```
+
+- [数学与张量约定](docs/conventions.md)、[数据来源与条件](docs/data_sources.md)
+- [掩码训练与结果](docs/phase5_validation.md)、[ASR/消融验收](docs/phase6_7_validation.md)
+- [两页技术总结](docs/assets/technical_summary.pdf)、[一页水声迁移笔记](docs/assets/underwater_to_microphone.pdf)
+- [三条简历要点、三分钟稿、20 题问答](docs/interview.md)
+- [进度与审计](docs/progress.md)
+
+## 适用范围与许可
+
+这是固定子集、静态房间仿真的离线研究工程，训练说话人覆盖有限，没有真实录音泛化或端到端流式验证。
+当前 GRU 是单向结构，但全句协方差依赖未来帧。
+原始数据、派生真实音频与官方模型保留各自来源条件，未随仓库上传；原始完整语料归档 MD5 未核验。
+代码为 [MIT](LICENSE)，自制诊断音频为 CC0-1.0。
+
+官方参考：[pyroomacoustics](https://github.com/LCAV/pyroomacoustics)、
+[SenseVoice](https://github.com/QwenAudio/SenseVoice)、
+[AISHELL-1](https://www.openslr.org/33/)、[MUSAN](https://www.openslr.org/17/)。
