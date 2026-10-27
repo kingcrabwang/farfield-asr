@@ -1,0 +1,20 @@
+# Ubuntu CPU 基础环境；ASR 与训练依赖在对应阶段单独验证后加入。
+name: farfield-asr
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - pip
+  - setuptools
+  - wheel
+  - numpy>=1.26,<3
+  - scipy>=1.12,<2
+  - matplotlib>=3.8,<4
+  - pysoundfile>=0.12,<1
+  - pyyaml>=6,<7
+  - pytest>=8,<10
+  - ruff>=0.9,<1
+  - pip:
+      - pyroomacoustics==0.10.1
+

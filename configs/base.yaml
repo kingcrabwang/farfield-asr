@@ -1,0 +1,28 @@
+# 所有实验沿用这些单位与约定；尚未生成正式语音数据。
+seed: 20261027
+sample_rate: 16000
+sound_speed_m_s: 343.0
+reference_mic: 0
+stft:
+  n_fft: 512
+  hop_length: 128
+arrays:
+  linear4:
+    geometry: linear
+    n_mics: 4
+    spacing_m: 0.04
+  circular6:
+    geometry: circular
+    n_mics: 6
+    radius_m: 0.04
+scenes:
+  room_dimensions_m:
+    - [6.0, 5.0, 3.0]
+    - [7.0, 6.0, 3.2]
+    - [8.0, 5.5, 2.8]
+  rt60_s: [0.2, 0.4, 0.6]
+  target_distance_m: [1.0, 2.0]
+  target_azimuth_deg: [30, 60, 90]
+  snr_db: [-5, 0, 5, 10]
+  sir_db: [-5, 0, 5]
+
