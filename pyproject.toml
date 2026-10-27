@@ -11,6 +11,8 @@ dependencies = ["numpy>=1.26,<3", "scipy>=1.12,<2", "matplotlib>=3.8,<4", "sound
 
 [project.optional-dependencies]
 simulation = ["pyroomacoustics==0.10.1"]
+evaluation = ["pesq==0.0.4", "pystoi==0.4.1"]
+data = ["oss2==2.19.1"]
 dev = ["pytest>=8,<10", "ruff>=0.9,<1"]
 
 [tool.setuptools.packages.find]

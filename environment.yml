@@ -17,4 +17,7 @@ dependencies:
   - ruff>=0.9,<1
   - pip:
       - pyroomacoustics==0.10.1
+      - pesq==0.0.4
+      - pystoi==0.4.1
+      - oss2==2.19.1
 
