@@ -30,4 +30,7 @@
 
 ## 公开仓库
 
-代码与可公开图表准备完成，仓库地址与远端修订在发布成功后补入本节。
+公开仓库：[kingcrabwang/farfield-asr](https://github.com/kingcrabwang/farfield-asr)。
+已核验可见性为 public、默认分支为 main，首次发布修订为
+`337a3d5e6e096c1d0a7491ba7781f8b1f2272204`；远端与本机 HEAD 一致。
+后续审计补充通过普通提交保存，最新修订以远端 main 为准。

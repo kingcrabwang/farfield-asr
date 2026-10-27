@@ -59,8 +59,8 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python scripts/run_ablations.py
 python scripts/summarize_ablations.py
 ```
 
-## 尚未完成
+## 交付补充
 
-D1 的公开 GitHub 发布、一条命令全流程和最终 README 整理，以及 D8 的两页技术总结、
-一页迁移笔记、简历 bullet、讲述稿和 20 题问答仍需完成。
+D1 的公开 GitHub 发布、一条命令全流程与 README，以及 D8 的两页技术总结、
+一页迁移笔记、简历 bullet、讲述稿和 20 题问答已在最终整理中补齐，见 docs/delivery_audit.md。
 五组音频已准备，但不把用户人工试听/口头自测写成机器已经完成的事项。

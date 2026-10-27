@@ -118,6 +118,7 @@ results/generated/       完整分数、原始解码、图、日志与运行环�
 - [两页技术总结](docs/assets/technical_summary.pdf)、[一页水声迁移笔记](docs/assets/underwater_to_microphone.pdf)
 - [三条简历要点、三分钟稿、20 题问答](docs/interview.md)
 - [进度与审计](docs/progress.md)
+- [D1-D8 最终交付审计](docs/delivery_audit.md)
 
 ## 适用范围与许可
 
